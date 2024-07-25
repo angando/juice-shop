@@ -2,6 +2,7 @@ pipeline {
     agent any
     environment {
         SCANNER_HOME = tool 'SonarQubeScanner'
+        SONAR_TOKEN = credentials('sonarqube-token') // Ajoutez cette ligne
     }
     stages {
         stage('Checkout') {
@@ -18,8 +19,14 @@ pipeline {
         }
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQubeScanner') {
-                    sh '${SCANNER_HOME}/bin/sonar-scanner -Dsonar.host.url=http://sonarqube:9000'
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                    ${SCANNER_HOME}/bin/sonar-scanner \
+                    -Dsonar.projectKey=juice-shop \
+                    -Dsonar.sources=. \
+                    -Dsonar.host.url=http://sonarqube:9000 \
+                    -Dsonar.login=${SONAR_TOKEN}
+                    '''
                 }
             }
         }
