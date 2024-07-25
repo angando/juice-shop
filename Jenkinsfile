@@ -18,8 +18,8 @@ pipeline {
         }
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh '${SCANNER_HOME}/bin/sonar-scanner'
+                withSonarQubeEnv('SonarQubeScanner') {
+                    sh '${SCANNER_HOME}/bin/sonar-scanner -Dsonar.host.url=http://sonarqube:9000'
                 }
             }
         }
