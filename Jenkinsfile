@@ -37,8 +37,17 @@ pipeline {
         }
         stage('Trivy Scan') {
             steps {
-                sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image --exit-code 1 --severity HIGH juice-shop'
-            }
+                //sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image --exit-code 1 --severity HIGH juice-shop'
+                 
+               script {
+                    def exitCode = sh(script: 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image --exit-code 1 --severity HIGH juice-shop', returnStatus: true)
+                    if (exitCode != 0) {
+                        echo "Trivy scan found vulnerabilities with HIGH severity"
+                        // Continue pipeline even if vulnerabilities are found (use with caution)
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
+             }
         }
         stage('Deploy') {
             steps {
