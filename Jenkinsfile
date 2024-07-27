@@ -3,8 +3,7 @@ pipeline {
     environment {
         SCANNER_HOME = tool 'SonarQubeScanner'
         SONAR_TOKEN = credentials('sonarqube-token')
-        DOCKER_HOME = tool  'Docker'
-        
+        DOCKER_HOME = tool 'Docker'
     }
     stages {
         stage('Checkout') {
@@ -61,9 +60,10 @@ pipeline {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         sh 'docker run -v $(pwd):/zap/wrk/:rw -t zaproxy/zap-stable zap-baseline.py -t http://localhost:3000 -r zap_report.html'
                     }
-	    }
+                }
+            }
         }
-   }
+    }
     post {
         always {
             cleanWs()
