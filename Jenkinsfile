@@ -58,7 +58,9 @@ pipeline {
             steps {
                 script {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                        sh "${DOCKER_HOME}/bin/docker run --network zapnet --user root -v $(pwd):/zap/wrk/:rw -t zaproxy/zap-stable zap-baseline.py -t http://juice-shop:3000 -r zap_report.html"
+                        sh '''
+                        ${DOCKER_HOME}/bin/docker run --network zapnet --user root -v $(pwd):/zap/wrk/:rw -t zaproxy/zap-stable zap-baseline.py -t http://juice-shop:3000 -r zap_report.html
+                        '''
                     }
                 }
             }
@@ -67,7 +69,9 @@ pipeline {
             steps {
                 script {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                        sh "${DOCKER_HOME}/bin/docker run --network zapnet --rm -v $(pwd):/tmp nikto:latest -h http://juice-shop:3000 -o /tmp/nikto_report.html"
+                        sh '''
+                        ${DOCKER_HOME}/bin/docker run --network zapnet --rm -v $(pwd):/tmp nikto:latest -h http://juice-shop:3000 -o /tmp/nikto_report.html
+                        '''
                     }
                 }
             }
