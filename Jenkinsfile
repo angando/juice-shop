@@ -70,7 +70,7 @@ pipeline {
                 script {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         sh '''
-                        ${DOCKER_HOME}/bin/docker run --network zapnet --rm -v $(pwd):/tmp nikto:latest -h http://juice-shop:3000 -o /tmp/nikto_report.html
+                        ${DOCKER_HOME}/bin/docker run --network zapnet --rm -v $(pwd):/tmp osodevops/nikto:latest -h http://juice-shop:3000 -o /tmp/nikto_report.html
                         '''
                     }
                 }
