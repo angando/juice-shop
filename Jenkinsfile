@@ -50,7 +50,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sh "${DOCKER_HOME}/bin/docker run -d --name juice-shop -p 3000:3000 juice-shop"
+                    sh "${DOCKER_HOME}/bin/docker run -d --name  juice-shop --network zapnet -p 3000:3000 juice-shop"
                 }
             }
         }
