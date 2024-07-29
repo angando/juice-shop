@@ -50,7 +50,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sh "${DOCKER_HOME}/bin/docker run -d --name juice-shop --network zapnet -p 3000:3000 juice-shop"
+                    sh "${DOCKER_HOME}/bin/docker run -d --name juice-shop -p 3000:3000 juice-shop"
                 }
             }
         }
@@ -58,9 +58,16 @@ pipeline {
             steps {
                 script {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                        sh """
-                        ${DOCKER_HOME}/bin/docker run --network zapnet --user root -v \$(pwd):/zap/wrk/:rw -t zaproxy/zap-stable zap-baseline.py -t http://juice-shop:3000 -r zap_report.html
-                        """
+                        sh "${DOCKER_HOME}/bin/docker run --network zapnet --user root -v $(pwd):/zap/wrk/:rw -t zaproxy/zap-stable zap-baseline.py -t http://juice-shop:3000 -r zap_report.html"
+                    }
+                }
+            }
+        }
+        stage('Nikto Scan') {
+            steps {
+                script {
+                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                        sh "${DOCKER_HOME}/bin/docker run --network zapnet --rm -v $(pwd):/tmp nikto:latest -h http://juice-shop:3000 -o /tmp/nikto_report.html"
                     }
                 }
             }
